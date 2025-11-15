@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "redstone-ready-bundles",
+	"version": "${version}",
+	"name": "redstone ready bundles",
+	"description": "Redstone ready bundles allows filling and measuring bundles using a pot, and emptying them with a dispenser",
+	"authors": [
+		"Familiar Omen"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/redstone-ready-bundles/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.familiar_omen.redstone_ready_bundles.RedstoneReadyBundles"
+		]
+	},
+	"mixins": [
+		"redstone-ready-bundles.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

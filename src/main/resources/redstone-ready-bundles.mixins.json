@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "net.familiar_omen.redstone_ready_bundles.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"HopperBlockEntityMixin",
+        "DecoratedPotBlockMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
