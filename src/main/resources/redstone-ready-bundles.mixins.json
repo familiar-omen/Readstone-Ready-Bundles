@@ -3,7 +3,7 @@
 	"package": "net.familiar_omen.redstone_ready_bundles.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"HopperBlockEntityMixin",
+		"DecoratedPotBlockEntityMixin",
         "DecoratedPotBlockMixin"
 	],
 	"injectors": {
