@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(DecoratedPotBlockEntity.class)
 public abstract class DecoratedPotBlockEntityMixin implements SingleStackInventory {
@@ -19,31 +20,30 @@ public abstract class DecoratedPotBlockEntityMixin implements SingleStackInvento
     @Shadow
     public abstract ItemStack getStack();
 
-    @Override
-    public boolean isValid(int slot, ItemStack stack) {
+    @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
+    public void fitsInBundle(int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (getStack().getItem() instanceof BundleItem) {
             BundleContentsComponent bundleContents = getStack().get(DataComponentTypes.BUNDLE_CONTENTS);
             BundleContentsComponent.Builder builder = new BundleContentsComponent.Builder(bundleContents);
 
-            return builder.add(stack.copy()) > 0;
+            cir.setReturnValue(builder.add(stack.copy()) > 0);
         }
-        return SingleStackInventory.super.isValid(slot, stack);
     }
 
-    @Override
-    public boolean canTransferTo(Inventory hopperInventory, int slot, ItemStack stack) {
-        if (slot == 2) return false;
-        return SingleStackInventory.super.canTransferTo(hopperInventory, slot, stack);
+    @Inject(method = "canTransferTo", at = @At("HEAD"), cancellable = true)
+    public void dontTakeFromFakeSlot(Inventory hopperInventory, int slot, ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (slot == 2)
+            cir.setReturnValue(false);
     }
 
-    @Override
-    public int size() {
-        if (getStack().getItem() instanceof BundleItem) return 2;
-        return SingleStackInventory.super.size();
+    @Inject(method = "size", at = @At("HEAD"), cancellable = true)
+    public void showAsNotFull(CallbackInfoReturnable<Integer> cir) {
+        if (getStack().getItem() instanceof BundleItem)
+            cir.setReturnValue(2);
     }
 
     @Inject(method = "setStack", at = @At("HEAD"), cancellable = true)
-    public void setStack(ItemStack stack, CallbackInfo ci) {
+    public void rerouteToBundle(ItemStack stack, CallbackInfo ci) {
         if (getStack().getItem() instanceof BundleItem) {
             BundleContentsComponent bundleContents = getStack().get(DataComponentTypes.BUNDLE_CONTENTS);
             BundleContentsComponent.Builder builder = new BundleContentsComponent.Builder(bundleContents);
@@ -56,10 +56,4 @@ public abstract class DecoratedPotBlockEntityMixin implements SingleStackInvento
             ci.cancel();
         }
     }
-
-    @Override
-    public void setStack(int slot, ItemStack stack) {
-        this.setStack(stack);
-    }
-
 }
